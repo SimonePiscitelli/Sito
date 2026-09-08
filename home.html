@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simone Piscitelli - Personal Website</title>
+    <!-- Google Fonts: Cinzel (Academic/Elegant titles), Playfair Display (Quotes), Inter (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* RESET & COLOR VARIABLES (Space/Academic Dark Theme) */
+        :root {
+            --bg-deep-space: #050508;  /* Deep space black */
+            --bg-section-alt: #0a0a0f; /* Alternative section black */
+            --bg-card: #121218;        /* Dark gray/black card container */
+            --border-color: #2a2a35;   /* Subtle dark border */
+            --text-main: #e0e0e6;      /* Off-white readable text */
+            --text-muted: #8a8a9e;     /* Muted gray for subtitles */
+            --accent-glow: #ffffff;     /* Pure white highlight */
+            
+            --font-academic: 'Cinzel', serif;
+            --font-quote: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-deep-space);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* FIXED NAVBAR */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: rgba(5, 5, 8, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        /* PROFILE & LOGO AREA (TOP LEFT) */
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-pic {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .logo {
+            font-family: var(--font-academic);
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 35px;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-family: var(--font-academic);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent-glow);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* SECTION LAYOUT (4 MAIN BLOCKS) */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 12%;
+            position: relative;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* SUBTLE BACKGROUND GRID PATTERN */
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        h2 {
+            font-family: var(--font-academic);
+            font-size: 2.2rem;
+            color: #fff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-left: 2px solid #fff;
+            padding-left: 20px;
+            margin-bottom: 50px;
+            align-self: flex-start;
+        }
+
+        /* BLOCK 1: HERO SECTION WITH PHYSICS QUOTE */
+        #hero {
+            background-color: var(--bg-deep-space);
+            text-align: center;
+            align-items: center;
+        }
+
+        .quote-container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .physics-quote {
+            font-family: var(--font-quote);
+            font-style: italic;
+            font-size: 2.2rem;
+            color: #fff;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .quote-author {
+            font-family: var(--font-academic);
+            font-size: 1rem;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 45px;
+        }
+
+        .btn-cta {
+            display: inline-block;
+            padding: 14px 35px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            color: #fff;
+            text-decoration: none;
+            font-family: var(--font-academic);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+
+        .btn-cta:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* CARDS / CONTAINERS FOR CONTENT */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 35px;
+            border-radius: 2px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #555;
+        }
+
+        .card h3 {
+            font-family: var(--font-academic);
+            font-size: 1.1rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        /* STYLED LINK FOR CARDS */
+        .course-link {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-link:hover {
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 300;
+        }
+
+        .card .meta {
+            font-family: var(--font-academic);
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 10px;
+            display: block;
+            letter-spacing: 1px;
+        }
+
+        /* SECTION BACKGROUND ALTERNATIONS */
+        #research { background-color: var(--bg-section-alt); }
+        #education { background-color: var(--bg-deep-space); }
+        #teaching { background-color: var(--bg-section-alt); }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: var(--bg-deep-space);
+            border-top: 1px solid var(--border-color);
+            font-family: var(--font-academic);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 20px;
+            }
+            .profile-container {
+                margin-bottom: 15px;
+            }
+            nav ul {
+                gap: 20px;
+            }
+            .physics-quote { font-size: 1.5rem; }
+            h2 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <header>
+        <div class="profile-container">
+            <img src="imgs/fotocv.jpeg" alt="Simone Piscitelli" class="profile-pic">
+            <div class="logo">Simone Piscitelli</div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#research">Research Activity</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#teaching">Teaching</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- BLOCK 1: HERO SECTION WITH PHYSICS QUOTE -->
+    <section id="hero">
+        <div class="quote-container">
+            <blockquote class="physics-quote">
+                "The most incomprehensible thing about the universe is that it is comprehensible."
+            </blockquote>
+            <p class="quote-author">&mdash; Albert Einstein</p>
+        </div>
+        <a href="#research" class="btn-cta">Explore Research</a>
+    </section>
+
+    <!-- BLOCK 2: RESEARCH ACTIVITY -->
+    <section id="research">
+        <h2>Research Activity</h2>
+        <div class="content-grid">
+            <div class="card">
+                <h3>Stray Light</h3>
+                <p>Investigating the effects of stray light on astronomical observations and developing mitigation strategies.</p>
+            </div>
+            <div class="card">
+                <h3>Star Activity</h3>
+                <p>Studying the emission of stars in X-Ray bands and understanding their evolutionary processes.</p>
+            </div>
+            <div class="card">
+                <h3>Gravitational Waves</h3>
+                <p>Investigating the detection and analysis of gravitational waves from cosmic events.</p>
+            </div>
+            <div class="card">
+                <h3>
+                    <a href="publications.html" class="course-link">
+                        Publications &rarr;
+                    </a>
+                </h3>
+                <p>Peer-reviewed scientific papers published in international journals and conference proceedings. Click above to explore the list.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOCK 3: EDUCATION -->
+    <section id="education">
+        <h2>Education</h2>
+        <div class="content-grid">
+            <div class="card">
+                <span class="meta">2023 &mdash; 2026</span>
+                <h3>Ph.D. in Astrophysics</h3>
+                <p>University of Insubria &bull; Thesis topic focused on stray light effects in astronomical observations and stars activity in X-Ray.</p>
+            </div>
+            <div class="card">
+                <span class="meta">2020 &mdash; 2023</span>
+                <h3>M.Sc. in Physics</h3>
+                <p>University of Milan &bull; Specialization in gravitational waves physics.</p>
+            </div>
+            <div class="card">
+                <span class="meta">2015 &mdash; 2019</span>
+                <h3>Bachelor in Physics</h3>
+                <p>University of Naples</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOCK 4: TEACHING -->
+    <section id="teaching">
+        <h2>Teaching</h2>
+        <div class="content-grid">
+            <div class="card">
+                <span class="meta">Academic Year 2026–2027</span>
+                <h3>
+                    <a href="booking.html" class="course-link">
+                        General Physics I & II &rarr;
+                    </a>
+                </h3>
+                <p>Teaching Assistant &bull; Conducting problem-solving sessions and laboratory supervision for undergraduate students. Click above to book a tutoring session.</p>
+            </div>
+            <div class="card">
+                <span class="meta">Seminars</span>
+                <h3>
+                    <a href="seminars.html" class="course-link">
+                        Advanced Astrophysics Workshops &rarr;
+                    </a>
+                </h3>
+                <p>Seminars and specialized workshops delivered over the course of the academic career. Click above to view the full list.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 Simone Piscitelli. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+</body>
+</html>
