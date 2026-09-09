@@ -202,36 +202,6 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            border-color: var(--border-color);
-        }
-
-        /* STATUS MESSAGES */
-        .status-message {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 2px;
-            font-size: 0.9rem;
-            display: none;
-            text-align: center;
-        }
-
-        .status-message.success {
-            display: block;
-            background: rgba(40, 167, 69, 0.15);
-            border: 1px solid #28a745;
-            color: #d4edda;
-        }
-
-        .status-message.error {
-            display: block;
-            background: rgba(220, 53, 69, 0.15);
-            border: 1px solid #dc3545;
-            color: #f8d7da;
-        }
-
         /* FOOTER */
         footer {
             text-align: center;
@@ -279,7 +249,8 @@
             <h1>Book a Tutoring Session</h1>
             <p>Select your preferred topic and time slot for a General Physics I & II tutoring or consultation session.</p>
 
-            <form id="booking-form">
+            <!-- SOSTITUISCI L'URL IN ACTION CON IL TUO ENDPOINT DI FORMSPREE -->
+            <form action="https://formspree.io/f/mdeopdzk" method="POST">
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" name="name" placeholder="John Doe" required>
@@ -287,18 +258,18 @@
 
                 <div class="form-group">
                     <label for="email">Academic Email</label>
-                    <input type="email" id="email" name="email" placeholder="student@university.edu" required>
+                    <input type="email" id="email" name="_replyto" placeholder="student@university.edu" required>
                 </div>
 
                 <div class="form-group">
                     <label for="subject">Course Topic</label>
                     <select id="subject" name="subject" required>
                         <option value="" disabled selected>Select a topic...</option>
-                        <option value="General Physics I: Classical Mechanics & Dynamics">General Physics I: Classical Mechanics & Dynamics</option>
-                        <option value="General Physics I: Thermodynamics">General Physics I: Thermodynamics</option>
-                        <option value="General Physics II: Electromagnetism">General Physics II: Electromagnetism</option>
-                        <option value="General Physics II: Optics & Waves">General Physics II: Optics & Waves</option>
-                        <option value="Exam Preparation & Exercises">Exam Preparation & Exercises</option>
+                        <option value="kinematics">General Physics I: Classical Mechanics & Dynamics</option>
+                        <option value="thermodynamics">General Physics I: Thermodynamics</option>
+                        <option value="electromagnetism">General Physics II: Electromagnetism</option>
+                        <option value="optics">General Physics II: Optics & Waves</option>
+                        <option value="exam-prep">Exam Preparation & Exercises</option>
                     </select>
                 </div>
 
@@ -313,8 +284,9 @@
                         <select id="time" name="time" required>
                             <option value="" disabled selected>Select time...</option>
                             <option value="16:00">04:00 - 05:00 PM</option>
-                            <option value="17:00">05:00 - 06:00 PM</option>
-                            <option value="18:00">06:00 - 07:00 PM</option>
+                            <option value="14:00">05:00 - 06:00 PM</option>
+                            <option value="14:00">06:00 - 07:00 PM</option>
+
                         </select>
                     </div>
                 </div>
@@ -324,10 +296,11 @@
                     <textarea id="notes" name="notes" rows="4" placeholder="Mention specific exercises or theoretical topics you would like to cover..."></textarea>
                 </div>
 
-                <button type="submit" id="submit-btn">Request Reservation</button>
-            </form>
+                <!-- CAMPO NASCOSTO PER L'OGGETTO DELL'E-MAIL -->
+                <input type="hidden" name="_subject" value="New Physics Tutoring Booking Request">
 
-            <div id="status-message" class="status-message"></div>
+                <button type="submit">Confirm Reservation</button>
+            </form>
         </div>
     </main>
 
@@ -336,91 +309,5 @@
         <p>&copy; 2026 Simone Piscitelli. ALL RIGHTS RESERVED.</p>
     </footer>
 
-    <!-- APPS SCRIPT INTEGRATION (CON DEBUG E FILTRO DATA) -->
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwikg4GiN1U188TUL3sYn8keAcAYq56NhekS_KDug3HQjIB-mqp1xPH3vt3OkfQrNdv/exec";
-
-        const form = document.getElementById('booking-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const statusMsg = document.getElementById('status-message');
-        const dateInput = document.getElementById('date');
-
-        // Imposta la data minima selezionabile (Oggi)
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.setAttribute('min', today);
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Controllo lato cliente per evitare prenotazioni in date passate
-            const selectedDate = dateInput.value;
-            if (selectedDate < today) {
-                statusMsg.className = "status-message error";
-                statusMsg.innerText = "Please select a valid date in the future.";
-                return;
-            }
-
-            console.log("1. Form intercettato correttamente. Avvio invio...");
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Sending Request...";
-            statusMsg.className = "status-message";
-            statusMsg.style.display = "none";
-
-            try {
-                // Recupero campi
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const topic = document.getElementById('subject').value;
-                const date = dateInput.value;
-                const time = document.getElementById('time').value;
-                const notes = document.getElementById('notes').value;
-
-                console.log("2. Dati raccolti:", { name, email, topic, date, time, notes });
-
-                // Formattazione per Google Apps Script
-                const formData = new URLSearchParams();
-                formData.append("action", "request");
-                formData.append("name", name);
-                formData.append("email", email);
-                formData.append("topic", topic);
-                formData.append("date", date);
-                formData.append("time", time);
-                formData.append("notes", notes);
-
-                console.log("3. Invio della richiesta HTTP a Google Apps Script...");
-
-                fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                })
-                .then(response => {
-                    console.log("4. Risposta ricevuta dal server (no-cors).");
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "Request Reservation";
-                    statusMsg.className = "status-message success";
-                    statusMsg.innerText = "Request sent successfully! Check your email inbox shortly.";
-                    form.reset();
-                    dateInput.setAttribute('min', today); // Re-imposta il minimo dopo il reset del form
-                })
-                .catch(error => {
-                    console.error("ERRORE nella chiamata fetch:", error);
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "Request Reservation";
-                    statusMsg.className = "status-message error";
-                    statusMsg.innerText = "Network error: " + error.message;
-                });
-
-            } catch (err) {
-                console.error("ERRORE durante la preparazione dei dati:", err);
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Request Reservation";
-                statusMsg.className = "status-message error";
-                statusMsg.innerText = "JS Error: " + err.message;
-            }
-        });
-    </script>
 </body>
 </html>
