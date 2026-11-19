@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XMM-Newton Stray Light - Simone Piscitelli</title>
+    
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+    
+    <!-- Font Awesome per le icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts: Cinzel & Inter (coerenti con index.html) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep-space: #050508;
+            --bg-card: rgba(18, 18, 24, 0.85);
+            --border-color: #2a2a35;
+            --border-hover: #6a6a7e;
+            --accent-white: #ffffff;
+            --accent-silver: #a0a0b2;
+            --text-main: #e0e0e6;
+            --text-muted: #8a8a9e;
+            
+            --font-academic: 'Cinzel', serif;
+            --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body, .reveal {
+            background-color: var(--bg-deep-space) !important;
+            font-family: var(--font-body) !important;
+            color: var(--text-main) !important;
+            overflow: hidden;
+        }
+
+        /* Sfondo con griglia sottile e gradiente monocromatico */
+        .ambient-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 65%),
+                radial-gradient(var(--border-color) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px;
+            z-index: 1;
+        }
+
+        /* Pulsante fisso Back to Home in alto a sinistra */
+        .home-nav {
+            position: fixed;
+            top: 25px;
+            left: 35px;
+            z-index: 1000;
+        }
+
+        .home-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: var(--font-academic);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .home-nav a:hover {
+            color: var(--accent-white);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Slide Reveal */
+        .reveal .slides {
+            z-index: 10;
+        }
+
+        .reveal .slides section {
+            padding: 0 !important;
+            height: 100%;
+        }
+
+        /* Tipografia */
+        h1, h2, h3, h4 {
+            font-family: var(--font-academic) !important;
+            font-weight: 600 !important;
+            letter-spacing: 1.5px;
+            text-transform: uppercase !important;
+            color: var(--accent-white) !important;
+        }
+
+        /* Card in stile Glassmorphism Monocromatico */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 35px rgba(255, 255, 255, 0.08);
+        }
+
+        /* Layout Hub Centrale */
+        .hub-container {
+            position: relative;
+            width: 960px;
+            height: 600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Linee SVG di connessione */
+        .connections-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .connection-line {
+            fill: none;
+            stroke: url(#line-gradient);
+            stroke-width: 2;
+            stroke-dasharray: 6, 6;
+            animation: strokeDash 25s linear infinite;
+        }
+
+        @keyframes strokeDash {
+            to {
+                stroke-dashoffset: -500;
+            }
+        }
+
+        /* Satellite Spaziale Centrale */
+        .satellite-center {
+            position: absolute;
+            top: 38%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(18, 18, 24, 0.96) 0%, rgba(5, 5, 8, 0.99) 100%);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 45px rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .satellite-center:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.14);
+        }
+
+        .satellite-svg {
+            width: 140px;
+            height: 140px;
+            animation: floatSatellite 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatSatellite {
+            0% { transform: translateY(-5px) rotate(-1deg); }
+            100% { transform: translateY(5px) rotate(1deg); }
+        }
+
+        /* Scritta Sotto il Satellite */
+        .satellite-title {
+            font-family: var(--font-academic);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--accent-white);
+            margin-top: -4px;
+            padding: 0, 15 px;
+            letter-spacing: 1.5px;
+            text-align: center;
+        }
+
+        /* Box dell'Hub (Dimensioni invariate) */
+        .hub-box {
+            position: absolute;
+            width: 200px;
+            padding: 14px 16px;
+            z-index: 5;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        /* Posizionamento Box Sinistra, Destra e Basso */
+        .box-left { top: 38%; left: 35px; transform: translateY(-50%); }
+        .box-left:hover { transform: translateY(-53%) scale(1.03); }
+
+        .box-right { top: 38%; right: 35px; transform: translateY(-50%); }
+        .box-right:hover { transform: translateY(-53%) scale(1.03); }
+
+        .box-bottom { bottom: 15px; left: 50%; transform: translateX(-50%); }
+        .box-bottom:hover { transform: translateX(-50%) translateY(-5px) scale(1.03); }
+
+        .box-tag {
+            font-family: var(--font-academic);
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .box-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-white);
+            margin: 0 0 4px 0 !important;
+        }
+
+        .box-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0 !important;
+            line-height: 1.3;
+            font-weight: 300;
+        }
+
+        /* Struttura Slide Dettaglio */
+        .slide-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 35px;
+            text-align: left;
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .slide-icon {
+            font-size: 1.4rem;
+            color: var(--accent-white);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 14px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .slide-title-group h2 {
+            margin: 0 !important;
+            font-size: 1.35rem !important;
+            line-height: 1.3 !important;
+        }
+
+        .slide-title-group .subtitle {
+            font-family: var(--font-academic);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        .slide-body {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            font-weight: 300;
+            margin-bottom: 20px;
+            background: rgba(10, 10, 15, 0.7);
+            padding: 16px 20px;
+            border-radius: 2px;
+            border-left: 2px solid var(--accent-white);
+        }
+
+        .slide-body a {
+            color: var(--accent-white);
+            text-decoration: underline;
+            font-weight: 400;
+            transition: opacity 0.2s ease;
+        }
+
+        .slide-body a:hover {
+            opacity: 0.75;
+        }
+
+        /* Griglia Media Generica */
+        .media-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .media-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .media-grid-2 { grid-template-columns: 1fr 1fr; }
+        .media-grid-1 {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .media-box {
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #0a0a0f;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .media-box:hover {
+            border-color: var(--accent-white);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.12);
+            transform: scale(1.02);
+        }
+
+        .media-box img, .media-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 8, 0.55);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .media-box:hover .media-overlay {
+            opacity: 1;
+        }
+
+        .media-overlay i {
+            font-size: 1.8rem;
+            color: var(--accent-white);
+            margin-bottom: 6px;
+        }
+
+        .media-overlay span {
+            font-family: var(--font-academic);
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            color: var(--accent-white);
+        }
+
+        /* Pulsante Ritorno */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--accent-white);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 10px 20px;
+            border-radius: 2px;
+            font-family: var(--font-academic);
+            font-size: 0.78rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-white);
+            color: #000000;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+        }
+
+        /* Modal Lightbox per ingrandire Media */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(5, 5, 8, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            max-width: 85vw;
+            max-height: 85vh;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            font-size: 2rem;
+            color: var(--accent-white);
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .lightbox-close:hover {
+            opacity: 0.7;
+        }
+
+        /* Stile Numerazione Slide e Controlli */
+        .reveal .slide-number {
+            font-family: var(--font-academic) !important;
+            background: rgba(18, 18, 24, 0.85) !important;
+            color: var(--text-muted) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 2px !important;
+            padding: 5px 10px !important;
+            font-size: 0.75rem !important;
+            letter-spacing: 1px;
+            right: 20px !important;
+            bottom: 20px !important;
+        }
+
+        .reveal .controls {
+            color: var(--accent-white) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Link Ritorno alla Home -->
+    <div class="home-nav">
+        <a href="index.html">&larr; Back to Home</a>
+    </div>
+
+    <!-- Sfondo con griglia sottile -->
+    <div class="ambient-bg"></div>
+
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDE 1: HUB CENTRALE -->
+            <section id="slide-hub">
+                <div class="hub-container">
+                    
+                    <!-- SVG Connessioni Curve (Palette Bianco/Grigio) -->
+                    <svg class="connections-svg" viewBox="0 0 960 600">
+                        <defs>
+                            <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.7" />
+                                <stop offset="50%" stop-color="#525260" stop-opacity="0.25" />
+                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.7" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Linea Curva Sinistra -->
+                        <path class="connection-line" d="M 480 230 C 370 180, 290 210, 235 228" />
+                        
+                        <!-- Linea Curva Destra -->
+                        <path class="connection-line" d="M 480 230 C 590 280, 670 240, 725 228" />
+
+                        <!-- Linea Curva Basso verso MERGE -->
+                        <path class="connection-line" d="M 480 360 C 550 420, 410 450, 480 500" />
+                    </svg>
+
+                    <!-- Satellite Spaziale Centrale (Palette Monocromatica) -->
+                    <div class="satellite-center" onclick="Reveal.slide(0)">
+                        <svg class="satellite-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Corpo centrale -->
+                            <rect x="42" y="42" width="16" height="16" rx="2" fill="#181820" stroke="#ffffff" stroke-width="1.5"/>
+                            <circle cx="50" cy="50" r="3" fill="#ffffff"/>
+
+                            <!-- Pannello Solare Sinistro -->
+                            <path d="M 10 38 L 38 38 L 38 62 L 10 62 Z" fill="#0d0d12" stroke="#a0a0b2" stroke-width="1.2"/>
+                            <line x1="19" y1="38" x2="19" y2="62" stroke="#525260" stroke-width="0.8"/>
+                            <line x1="28" y1="38" x2="28" y2="62" stroke="#525260" stroke-width="0.8"/>
+                            <line x1="10" y1="50" x2="38" y2="50" stroke="#525260" stroke-width="0.8"/>
+                            <line x1="38" y1="48" x2="42" y2="48" stroke="#8a8a9e" stroke-width="1.5"/>
+
+                            <!-- Pannello Solare Destro -->
+                            <path d="M 62 38 L 90 38 L 90 62 L 62 62 Z" fill="#0d0d12" stroke="#a0a0b2" stroke-width="1.2"/>
+                            <line x1="71" y1="38" x2="71" y2="62" stroke="#525260" stroke-width="0.8"/>
+                            <line x1="80" y1="38" x2="80" y2="62" stroke="#525260" stroke-width="0.8"/>
+                            <line x1="62" y1="50" x2="90" y2="50" stroke="#525260" stroke-width="0.8"/>
+                            <line x1="58" y1="48" x2="62" y2="48" stroke="#8a8a9e" stroke-width="1.5"/>
+
+                            <!-- Antenna Paraboloide superiore -->
+                            <path d="M 44 32 C 44 24, 56 24, 56 32" stroke="#e0e0e6" stroke-width="1.5" fill="none"/>
+                            <line x1="50" y1="32" x2="50" y2="42" stroke="#8a8a9e" stroke-width="1.2"/>
+                            <circle cx="50" cy="25" r="1.5" fill="#ffffff"/>
+
+                            <!-- Sensori inferiori -->
+                            <line x1="47" y1="58" x2="43" y2="70" stroke="#8a8a9e" stroke-width="1.2"/>
+                            <line x1="53" y1="58" x2="57" y2="70" stroke="#8a8a9e" stroke-width="1.2"/>
+                            <circle cx="43" cy="70" r="1.2" fill="#e0e0e6"/>
+                            <circle cx="57" cy="70" r="1.2" fill="#e0e0e6"/>
+                        </svg>
+                        <span class="satellite-title">XMM - Newton Stray Light</span>
+                    </div>
+
+                    <!-- BOX 1 (Sinistra) -->
+                    <div class="hub-box glass-card box-left" onclick="Reveal.slide(1)">
+                        <span class="box-tag">Section 01</span>
+                        <h4 class="box-title">SHADE</h4>
+                        <p class="box-desc">Tilt inference algorithm</p>
+                    </div>
+
+                    <!-- BOX 2 (Destra) -->
+                    <div class="hub-box glass-card box-right" onclick="Reveal.slide(2)">
+                        <span class="box-tag">Section 02</span>
+                        <h3 class="box-title">CAS</h3>
+                        <p class="box-desc">Imaging process algorithm</p>
+                    </div>
+
+                    <!-- BOX 3 (Basso) -->
+                    <div class="hub-box glass-card box-bottom" onclick="Reveal.slide(3)">
+                        <span class="box-tag">Section 03</span>
+                        <h3 class="box-title">MERGE</h3>
+                        <p class="box-desc">Integration & results analysis</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SLIDE DETTAGLIO 1 -->
+            <section id="slide-1">
+                <div class="slide-content glass-card">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fa-solid fa-photo-film"></i>
+                        </div>
+                        <div class="slide-title-group">
+                            <span class="subtitle">Section 01</span>
+                            <h2>SHell misAlignment Detection for straylight Estimation (SHADE)</h2>
+                        </div>
+                    </div>
+
+                    <div class="slide-body">
+                        <p>SHADE uses analytical equations to inject tilts in mirror shells and generate tilted pattern. TPE is used to infer the tilts parameters comparing analytical arcs with observed ones.</p>
+                        <a href="https://www.aanda.org/articles/aa/full_html/2025/11/aa55325-25/aa55325-25.html" target="_blank">Link to the A&A paper &rarr;</a>
+                    </div>
+
+                    <div class="media-grid media-grid-3">
+                        <div class="media-box" onclick="openLightbox('video', 'Straylight.mp4')">
+                            <video src="Straylight.mp4" muted loop autoplay></video>
+                            <div class="media-overlay">
+                                <i class="fa-solid fa-circle-play"></i>
+                                <span>Play Video</span>
+                            </div>
+                        </div>
+
+                        <div class="media-box" onclick="openLightbox('image', 'meeting_images/Shell16.png')">
+                            <img src="meeting_images/Shell16.png" alt="Shell 16">
+                            <div class="media-overlay">
+                                <i class="fa-solid fa-expand"></i>
+                                <span>Expand Shell16</span>
+                            </div>
+                        </div>
+
+                        <div class="media-box" onclick="openLightbox('image', 'meeting_images/Shell10-11.png')">
+                            <img src="meeting_images/Shell10-11.png" alt="Shell 10-11">
+                            <div class="media-overlay">
+                                <i class="fa-solid fa-expand"></i>
+                                <span>Expand Shell10-11</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-back" onclick="Reveal.slide(0)">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Hub
+                    </button>
+                </div>
+            </section>
+
+            <!-- SLIDE DETTAGLIO 2 -->
+            <section id="slide-2">
+                <div class="slide-content glass-card">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <div class="slide-title-group">
+                            <span class="subtitle">Section 02</span>
+                            <h2>Canny Algorithm for Stray light (CAS)</h2>
+                        </div>
+                    </div>
+
+                    <div class="slide-body">
+                        <p>Uses Canny algorithm that is based on calculation of gradients of luminosity to detect borders of the arcs and contour their shape.</p>
+                    </div>
+
+                    <div class="media-grid media-grid-2">
+                        <div class="media-box" onclick="openLightbox('image', 'meeting_images/0932201101.png')">
+                            <img src="meeting_images/0932201101.png" alt="CAS Image 1">
+                            <div class="media-overlay">
+                                <i class="fa-solid fa-expand"></i>
+                                <span>Expand Image 1</span>
+                            </div>
+                        </div>
+
+                        <div class="media-box" onclick="openLightbox('image', 'meeting_images/final_removal_result.png')">
+                            <img src="meeting_images/final_removal_result.png" alt="CAS Image 2">
+                            <div class="media-overlay">
+                                <i class="fa-solid fa-expand"></i>
+                                <span>Expand Image 2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-back" onclick="Reveal.slide(0)">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Hub
+                    </button>
+                </div>
+            </section>
+
+            <!-- SLIDE DETTAGLIO 3: MERGE -->
+            <section id="slide-3">
+                <div class="slide-content glass-card">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fa-solid fa-code-merge"></i>
+                        </div>
+                        <div class="slide-title-group">
+                            <span class="subtitle">Section 03</span>
+                            <h2>MERGE</h2>
+                        </div>
+                    </div>
+
+                    <div class="slide-body">
+                        <p>Combined analysis and integration of the SHADE and CAS algorithms to produce unified straylight mitigation and detection results.</p>
+                    </div>
+
+                    <div class="media-grid media-grid-1">
+                        <div class="media-box" onclick="openLightbox('image', 'meeting_images/FinalMask_Canny+Shade.png')">
+                            <img src="meeting_images/FinalMask_Canny+Shade.png" alt="MERGE Image">
+                            <div class="media-overlay">
+                                <i class="fa-solid fa-expand"></i>
+                                <span>Expand MERGE Image</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-back" onclick="Reveal.slide(0)">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Hub
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Modal Lightbox per ingrandire contenuti -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <span class="lightbox-close" onclick="closeLightbox(event)">&times;</span>
+        <div id="lightboxContainer"></div>
+    </div>
+
+    <!-- Reveal.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: false,
+            slideNumber: 'c/t',
+            transition: 'fade',
+            transitionSpeed: 'normal',
+            width: 1100,
+            height: 700,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0
+        });
+
+        function openLightbox(type, src) {
+            const modal = document.getElementById('lightboxModal');
+            const container = document.getElementById('lightboxContainer');
+            container.innerHTML = '';
+
+            if (type === 'video') {
+                const video = document.createElement('video');
+                video.src = src;
+                video.controls = true;
+                video.autoplay = true;
+                video.className = 'lightbox-content';
+                container.appendChild(video);
+            } else if (type === 'image') {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'lightbox-content';
+                container.appendChild(img);
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeLightbox(event) {
+            const modal = document.getElementById('lightboxModal');
+            if (event.target === modal || event.target.classList.contains('lightbox-close')) {
+                modal.classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('lightboxContainer').innerHTML = '';
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
