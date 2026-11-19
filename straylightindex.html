@@ -114,12 +114,13 @@
         .hub-container {
             position: relative;
             width: 960px;
-            height: 600px;
+            height: 670px; /* era 620px: dà respiro verticale */
             margin: 0 auto;
             display: flex;
             justify-content: center;
             align-items: center;
         }
+
 
         /* Linee SVG di connessione */
         .connections-svg {
@@ -146,14 +147,14 @@
             }
         }
 
-        /* Satellite Spaziale Centrale */
+        /* Satellite Spaziale Centrale (Centrato per ospitare i 4 pannelli) */
         .satellite-center {
             position: absolute;
-            top: 38%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 250px;
-            height: 250px;
+            width: 215px;
+            height: 215px;
             z-index: 5;
             display: flex;
             flex-direction: column;
@@ -173,8 +174,8 @@
         }
 
         .satellite-svg {
-            width: 140px;
-            height: 140px;
+            width: 130px;
+            height: 130px;
             animation: floatSatellite 6s ease-in-out infinite alternate;
         }
 
@@ -190,31 +191,35 @@
             font-weight: 700;
             color: var(--accent-white);
             margin-top: -4px;
-            padding: 0, 15 px;
+            padding: 0 15px;
             letter-spacing: 1.5px;
             text-align: center;
         }
 
-        /* Box dell'Hub (Dimensioni invariate) */
+        /* Box dell'Hub */
         .hub-box {
             position: absolute;
-            width: 200px;
-            padding: 14px 16px;
+            width: 235px;       /* era 220px: evita che il testo vada a capo */
+            padding: 10px 15px; /* era 14px 16px: più snello e meno alto */
             z-index: 5;
             cursor: pointer;
             text-align: left;
         }
 
-        /* Posizionamento Box Sinistra, Destra e Basso */
-        .box-left { top: 38%; left: 35px; transform: translateY(-50%); }
+        .box-top { top: 18px; left: 50%; transform: translateX(-50%); }
+        .box-top:hover { transform: translateX(-50%) translateY(-4px) scale(1.03); }
+
+        .box-bottom { bottom: 18px; left: 50%; transform: translateX(-50%); }
+        .box-bottom:hover { transform: translateX(-50%) translateY(-4px) scale(1.03); }
+
+        /* Posizionamento 4 Box: Sinistra, Destra, Alto e Basso */
+        .box-left { top: 50%; left: 30px; transform: translateY(-50%); }
         .box-left:hover { transform: translateY(-53%) scale(1.03); }
 
-        .box-right { top: 38%; right: 35px; transform: translateY(-50%); }
+        .box-right { top: 50%; right: 30px; transform: translateY(-50%); }
         .box-right:hover { transform: translateY(-53%) scale(1.03); }
 
-        .box-bottom { bottom: 15px; left: 50%; transform: translateX(-50%); }
-        .box-bottom:hover { transform: translateX(-50%) translateY(-5px) scale(1.03); }
-
+    
         .box-tag {
             font-family: var(--font-academic);
             font-size: 0.68rem;
@@ -484,8 +489,8 @@
             <section id="slide-hub">
                 <div class="hub-container">
                     
-                    <!-- SVG Connessioni Curve (Palette Bianco/Grigio) -->
-                    <svg class="connections-svg" viewBox="0 0 960 600">
+                    <!-- SVG Connessioni Curve (4 Linee per i 4 Pannelli) -->
+                    <svg class="connections-svg" viewBox="0 0 960 670">
                         <defs>
                             <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stop-color="#ffffff" stop-opacity="0.7" />
@@ -494,17 +499,19 @@
                             </linearGradient>
                         </defs>
                         
-                        <!-- Linea Curva Sinistra -->
-                        <path class="connection-line" d="M 480 230 C 370 180, 290 210, 235 228" />
+                        <!-- Linea Curva Sinistra (SHADE) -->
+                        <path class="connection-line" d="M 372 335 C 325 300, 295 360, 265 335" />
                         
-                        <!-- Linea Curva Destra -->
-                        <path class="connection-line" d="M 480 230 C 590 280, 670 240, 725 228" />
+                        <!-- Linea Curva Destra (CAS) -->
+                        <path class="connection-line" d="M 588 335 C 635 370, 665 310, 695 335" />
 
-                        <!-- Linea Curva Basso verso MERGE -->
-                        <path class="connection-line" d="M 480 360 C 550 420, 410 450, 480 500" />
+                        <!-- Linea Curva Basso (MERGE) -->
+                        <path class="connection-line" d="M 480 442 C 520 490, 440 535, 480 582" />
+
+                        <!-- Linea Curva Alto (StrayNet) -->
+                        <path class="connection-line" d="M 480 228 C 440 180, 520 135, 480 88" />
                     </svg>
-
-                    <!-- Satellite Spaziale Centrale (Palette Monocromatica) -->
+                    <!-- Satellite Spaziale Centrale -->
                     <div class="satellite-center" onclick="Reveal.slide(0)">
                         <svg class="satellite-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <!-- Corpo centrale -->
@@ -558,6 +565,13 @@
                         <span class="box-tag">Section 03</span>
                         <h3 class="box-title">MERGE</h3>
                         <p class="box-desc">Integration & results analysis</p>
+                    </div>
+
+                    <!-- BOX 4 (Alto) - StrayNet -->
+                    <div class="hub-box glass-card box-top" onclick="Reveal.slide(4)">
+                        <span class="box-tag">Section 04</span>
+                        <h4 class="box-title">StrayNet</h4>
+                        <p class="box-desc">Deep learning stray light model</p>
                     </div>
 
                 </div>
@@ -677,6 +691,39 @@
                             <div class="media-overlay">
                                 <i class="fa-solid fa-expand"></i>
                                 <span>Expand MERGE Image</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-back" onclick="Reveal.slide(0)">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Hub
+                    </button>
+                </div>
+            </section>
+
+            <!-- SLIDE DETTAGLIO 4: STRAYNET -->
+            <section id="slide-4">
+                <div class="slide-content glass-card">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <div class="slide-title-group">
+                            <span class="subtitle">Section 04</span>
+                            <h2>StrayNet</h2>
+                        </div>
+                    </div>
+
+                    <div class="slide-body">
+                        <p>Neural network architecture trained to detect, segment, and mitigate stray light artifacts in XMM-Newton observations.</p>
+                    </div>
+
+                    <div class="media-grid media-grid-1">
+                        <div class="media-box" onclick="openLightbox('image', 'meeting_images/StrayNet_result.png')">
+                            <img src="meeting_images/StrayNet_result.png" alt="StrayNet Result">
+                            <div class="media-overlay">
+                                <i class="fa-solid fa-expand"></i>
+                                <span>Expand StrayNet Image</span>
                             </div>
                         </div>
                     </div>
